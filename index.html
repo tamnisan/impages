@@ -3,199 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organized Sections with Lines</title>
+    <title>Notion-style Organizer</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
         }
 
         .container {
-            position: relative;
-            width: 80%;
             max-width: 800px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            margin: 0 auto;
+            position: relative;
         }
 
         /* Main vertical line */
         .vertical-line {
-            position: absolute;
-            left: 50px;
+            position: fixed;
+            left: 20px;
             top: 0;
             bottom: 0;
-            width: 4px;
+            width: 3px;
             background-color: #3b3b3b;
-            z-index: 1;
         }
 
-        /* Plus icon for adding main sections */
-        .add-main-section {
-            position: absolute;
-            top: 20px;
-            left: 36px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            text-align: center;
-            cursor: pointer;
-            z-index: 2;
-            transition: background-color 0.3s ease;
-        }
-
-        .add-main-section:hover {
-            background-color: #0056b3;
-        }
-
-        /* Main section styles */
+        /* Main section button and style */
         .main-section {
+            margin-left: 50px;
             position: relative;
-            margin-top: 30px;
-            margin-left: 60px;
+        }
+
+        .main-section-btn {
             display: flex;
             align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #333;
+            transition: color 0.3s ease;
         }
 
-        .main-section::before {
-            content: '';
-            position: absolute;
-            left: -30px;
-            top: 50%;
-            width: 30px;
-            height: 2px;
-            background-color: #3b3b3b;
-            z-index: 1;
+        .main-section-btn:hover {
+            color: #007bff;
         }
 
-        .section-box {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 8px;
-            min-width: 200px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            z-index: 2;
+        /* Subsection styles */
+        .subsections {
+            display: none; /* Initially hidden */
+            margin-left: 20px;
+            margin-top: 5px;
         }
 
-        /* Plus icon for adding subsections */
-        .add-subsection {
-            margin-left: 10px;
+        .subsection {
+            margin-left: 20px;
+            font-size: 1rem;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Button styles */
+        .add-btn {
             background-color: #28a745;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            text-align: center;
+            padding: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
-        .add-subsection:hover {
+        .add-btn:hover {
             background-color: #218838;
         }
 
-        /* Subsection container */
-        .subsections {
+        /* Box for adding subsections or links */
+        .input-box {
+            display: none;
             margin-top: 10px;
-            margin-left: 80px;
-            display: none; /* hidden initially */
+            margin-left: 70px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .subsections.active {
-            display: block; /* shows on click */
+        .input-box label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
 
-        .subsection-box {
-            padding: 8px 15px;
-            background-color: #28a745;
+        .input-box input {
+            width: 90%;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .input-box .save-btn {
+            background-color: #007bff;
             color: white;
-            border-radius: 6px;
-            margin-top: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
         }
 
-        /* Plus icon animation */
-        .rotate {
-            transform: rotate(45deg);
+        .input-box .save-btn:hover {
+            background-color: #0056b3;
         }
 
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- Vertical Line -->
         <div class="vertical-line"></div>
 
-        <!-- Add main section button -->
-        <button class="add-main-section" onclick="addMainSection()">+</button>
-
-        <!-- Main sections will be dynamically added here -->
+        <!-- Main sections container -->
         <div id="main-sections"></div>
+
+        <!-- Add main section button -->
+        <button class="add-btn" onclick="addMainSection()">+</button>
     </div>
 
     <script>
-        // Function to add main section
+        // Load data from localStorage
+        const savedData = JSON.parse(localStorage.getItem('sections')) || [];
+
+        const mainSectionsContainer = document.getElementById('main-sections');
+
+        // Function to add a main section
         function addMainSection() {
-            const mainSectionContainer = document.getElementById('main-sections');
-            const section = document.createElement('div');
-            section.classList.add('main-section');
+            const sectionId = Date.now();
+            const mainSection = createMainSection(sectionId);
+            mainSectionsContainer.appendChild(mainSection);
+            savedData.push({ id: sectionId, subsections: [] });
+            saveData();
+        }
 
-            // Create main section box
-            const sectionBox = document.createElement('div');
-            sectionBox.classList.add('section-box');
-            sectionBox.textContent = 'Main Section';
+        // Function to create the main section element
+        function createMainSection(id) {
+            const mainSection = document.createElement('div');
+            mainSection.classList.add('main-section');
+            mainSection.id = id;
 
-            // Create add subsection button
-            const addSubsectionBtn = document.createElement('button');
-            addSubsectionBtn.classList.add('add-subsection');
-            addSubsectionBtn.textContent = '+';
-            addSubsectionBtn.onclick = () => toggleSubsections(subsections, addSubsectionBtn);
+            const mainSectionBtn = document.createElement('div');
+            mainSectionBtn.classList.add('main-section-btn');
+            mainSectionBtn.innerHTML = `Main Section <button class="add-btn" onclick="addSubsection(${id})">+</button>`;
+            mainSectionBtn.onclick = () => toggleSubsections(id);
 
-            // Subsections container
             const subsections = document.createElement('div');
             subsections.classList.add('subsections');
 
-            section.appendChild(sectionBox);
-            section.appendChild(addSubsectionBtn);
-            section.appendChild(subsections);
+            mainSection.appendChild(mainSectionBtn);
+            mainSection.appendChild(subsections);
 
-            mainSectionContainer.appendChild(section);
-        }
-
-        // Function to toggle subsections visibility
-        function toggleSubsections(subsectionContainer, button) {
-            subsectionContainer.classList.toggle('active');
-            button.classList.toggle('rotate');
-
-            if (subsectionContainer.classList.contains('active')) {
-                addSubsection(subsectionContainer);
-            }
+            return mainSection;
         }
 
         // Function to add a subsection
-        function addSubsection(container) {
-            const subsection = document.createElement('div');
-            subsection.classList.add('subsection-box');
-            subsection.textContent = 'Subsection';
-
-            container.appendChild(subsection);
+        function addSubsection(sectionId) {
+            const mainSection = document.getElementById(sectionId);
+            const subsections = mainSection.querySelector('.subsections');
+            const inputBox = createInputBox(sectionId);
+            subsections.appendChild(inputBox);
+            subsections.style.display = 'block'; // Show subsections if hidden
         }
-    </script>
 
+        // Create input box for adding subsection/link
+        function createInputBox(sectionId) {
+            const inputBox = document.createElement('div');
+            inputBox.classList.add('input-box');
+
+            const subsectionLabel = document.createElement('label');
+            subsectionLabel.textContent = 'Subsection Name';
+            const subsectionInput = document.createElement('input');
+            subsectionInput.type = 'text';
+
+            const linkLabel = document.createElement('label');
+            linkLabel.textContent = 'Link (optional)';
+            const linkInput = document.createElement('input');
+            linkInput.type = 'url';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.classList.add('save-btn');
+            saveBtn.textContent = 'Save';
+            saveBtn.onclick = () => saveSubsection(sectionId, subsectionInput.value, linkInput.value, inputBox);
+
+            inputBox.appendChild(subsectionLabel);
+            inputBox.appendChild(subsectionInput);
+            inputBox.appendChild(linkLabel);
+            inputBox.appendChild(linkInput);
+            inputBox.appendChild(saveBtn);
+
+            return inputBox;
+        }
+
+        // Save subsection data
+        function saveSubsection(sectionId, subsectionName, link, inputBox) {
+            const sectionIndex = savedData.findIndex(section => section.id === sectionId);
+            const subsection = { name: subsectionName, link: link, subsections: [] };
+            savedData[sectionIndex].subsections.push(subsection);
+            saveData();
+
+            const newSubsection = createSubsection(subsectionName, link);
+            inputBox.parentElement.appendChild(newSubsection);
+            inputBox.remove(); // Remove input box after saving
+        }
+
+        // Create a subsection
+        function createSubsection(name, link) {
+            const subsection = document.createElement('div');
+            subsection.classList.add('subsection');
+
+            if (link) {
+                const anchor = document.createElement('a');
+                anchor.href = link;
+                anchor.textContent = name;
+                anchor.target = '_blank'; // Open link in a new tab
+                subsection.appendChild(anchor);
+            } else {
+                subsection.textContent = name;
+            }
+
+            return subsection;
+        }
+
+        // Toggle subsections
+        function toggleSubsections(id) {
+            const mainSection = document.getElementById(id);
+            const subsections = mainSection.querySelector('.subsections');
+            if (subsections.style.display === 'none' || !subsections.style.display) {
+                subsections.style.display = 'block';
+            } else {
+                subsections.style.display = 'none';
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('sections', JSON.stringify(savedData));
+        }
+
+        // Load saved sections on page load
+        function loadSections() {
+            savedData.forEach(section => {
+                const mainSection = createMainSection(section.id);
+                mainSectionsContainer.appendChild(mainSection);
+
+                const subsectionsContainer = mainSection.querySelector('.subsections');
+                section.subsections.forEach(subsection => {
+                    const newSubsection = createSubsection(subsection.name, subsection.link);
+                    subsectionsContainer.appendChild(newSubsection);
+                });
+            });
+        }
+
+        // Initial load
+        window.onload = loadSections;
+
+    </script>
 </body>
 </html>
