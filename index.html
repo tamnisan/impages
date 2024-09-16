@@ -3,18 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organized Link Manager</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Organized Sections with Lines</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Main vertical line */
+        .vertical-line {
+            position: absolute;
+            left: 50px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #3b3b3b;
+            z-index: 1;
+        }
+
+        /* Plus icon for adding main sections */
+        .add-main-section {
+            position: absolute;
+            top: 20px;
+            left: 36px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 2;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-main-section:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main section styles */
+        .main-section {
+            position: relative;
+            margin-top: 30px;
+            margin-left: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .main-section::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            width: 30px;
+            height: 2px;
+            background-color: #3b3b3b;
+            z-index: 1;
+        }
+
+        .section-box {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px;
+            min-width: 200px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+
+        /* Plus icon for adding subsections */
+        .add-subsection {
+            margin-left: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-subsection:hover {
+            background-color: #218838;
+        }
+
+        /* Subsection container */
+        .subsections {
+            margin-top: 10px;
+            margin-left: 80px;
+            display: none; /* hidden initially */
+        }
+
+        .subsections.active {
+            display: block; /* shows on click */
+        }
+
+        .subsection-box {
+            padding: 8px 15px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 6px;
+            margin-top: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Plus icon animation */
+        .rotate {
+            transform: rotate(45deg);
+        }
+
+    </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Study Links Organizer</h1>
-        <button class="add-main-section" onclick="addMainSection()">+ Add Main Section</button>
-        <div id="sections-container">
-            <!-- Main sections will be dynamically added here -->
-        </div>
+        <!-- Vertical Line -->
+        <div class="vertical-line"></div>
+
+        <!-- Add main section button -->
+        <button class="add-main-section" onclick="addMainSection()">+</button>
+
+        <!-- Main sections will be dynamically added here -->
+        <div id="main-sections"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Function to add main section
+        function addMainSection() {
+            const mainSectionContainer = document.getElementById('main-sections');
+            const section = document.createElement('div');
+            section.classList.add('main-section');
+
+            // Create main section box
+            const sectionBox = document.createElement('div');
+            sectionBox.classList.add('section-box');
+            sectionBox.textContent = 'Main Section';
+
+            // Create add subsection button
+            const addSubsectionBtn = document.createElement('button');
+            addSubsectionBtn.classList.add('add-subsection');
+            addSubsectionBtn.textContent = '+';
+            addSubsectionBtn.onclick = () => toggleSubsections(subsections, addSubsectionBtn);
+
+            // Subsections container
+            const subsections = document.createElement('div');
+            subsections.classList.add('subsections');
+
+            section.appendChild(sectionBox);
+            section.appendChild(addSubsectionBtn);
+            section.appendChild(subsections);
+
+            mainSectionContainer.appendChild(section);
+        }
+
+        // Function to toggle subsections visibility
+        function toggleSubsections(subsectionContainer, button) {
+            subsectionContainer.classList.toggle('active');
+            button.classList.toggle('rotate');
+
+            if (subsectionContainer.classList.contains('active')) {
+                addSubsection(subsectionContainer);
+            }
+        }
+
+        // Function to add a subsection
+        function addSubsection(container) {
+            const subsection = document.createElement('div');
+            subsection.classList.add('subsection-box');
+            subsection.textContent = 'Subsection';
+
+            container.appendChild(subsection);
+        }
+    </script>
+
 </body>
 </html>
