@@ -1,107 +1,56 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+let sectionCounter = 1;
+
+function addMainSection() {
+    const sectionsContainer = document.getElementById("sections-container");
+
+    const mainSection = document.createElement("div");
+    mainSection.className = "main-section";
+    mainSection.id = `section-${sectionCounter}`;
+
+    const titleInput = document.createElement("input");
+    titleInput.type = "text";
+    titleInput.placeholder = "Main Section Title";
+
+    const addSubsectionButton = document.createElement("button");
+    addSubsectionButton.className = "add-subsection";
+    addSubsectionButton.innerText = "+ Add Subsection";
+    addSubsectionButton.onclick = () => addSubsection(mainSection.id);
+
+    const deleteMainSectionButton = document.createElement("button");
+    deleteMainSectionButton.className = "delete-button";
+    deleteMainSectionButton.innerText = "Delete";
+    deleteMainSectionButton.onclick = () => mainSection.remove();
+
+    const subSectionsContainer = document.createElement("div");
+    subSectionsContainer.className = "sub-sections";
+
+    mainSection.appendChild(titleInput);
+    mainSection.appendChild(addSubsectionButton);
+    mainSection.appendChild(deleteMainSectionButton);
+    mainSection.appendChild(subSectionsContainer);
+
+    sectionsContainer.appendChild(mainSection);
+
+    sectionCounter++;
 }
 
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+function addSubsection(mainSectionId) {
+    const mainSection = document.getElementById(mainSectionId);
+    const subSectionsContainer = mainSection.querySelector(".sub-sections");
 
-.container {
-    width: 80%;
-    max-width: 800px;
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
+    const subSection = document.createElement("div");
+    subSection.className = "sub-section";
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #4a4a4a;
-}
+    const subSectionInput = document.createElement("input");
+    subSectionInput.type = "text";
+    subSectionInput.placeholder = "Subsection Title or Link";
 
-.add-main-section {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    font-size: 18px;
-    margin-bottom: 20px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+    const deleteSubsectionButton = document.createElement("button");
+    deleteSubsectionButton.className = "delete-button";
+    deleteSubsectionButton.innerText = "Delete";
+    deleteSubsectionButton.onclick = () => subSection.remove();
 
-.add-main-section:hover {
-    background-color: #45a049;
-}
-
-.main-section, .sub-section {
-    margin-bottom: 10px;
-}
-
-.main-section {
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f1f1f1;
-}
-
-.section-title {
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.add-subsection {
-    margin-top: 10px;
-    font-size: 14px;
-    background-color: #2196f3;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.add-subsection:hover {
-    background-color: #1e88e5;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-}
-
-.sub-sections {
-    margin-left: 20px;
-}
-
-.delete-button {
-    background-color: #f44336;
-    color: white;
-    padding: 5px 8px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: background-color 0.3s;
-}
-
-.delete-button:hover {
-    background-color: #d32f2f;
+    subSection.appendChild(subSectionInput);
+    subSection.appendChild(deleteSubsectionButton);
+    subSectionsContainer.appendChild(subSection);
 }
