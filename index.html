@@ -3,40 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Organized Study Hub</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <title>Organized Link Manager</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Study Hub</h1>
-            <p class="quote">"The secret to getting ahead is getting started."</p>
-        </header>
-        <div class="links-section">
-            <h2>Organize Your Links</h2>
-            
-            <!-- Section for link types -->
-            <div id="linksContainer"></div>
-
-            <!-- Input form to add new links -->
-            <div class="add-link-section">
-                <h3>Add New Link</h3>
-                <form id="linkForm">
-                    <label for="sectionTitle">Section Title:</label>
-                    <input type="text" id="sectionTitle" placeholder="Enter section title" required>
-
-                    <label for="linkTitle">Link Title:</label>
-                    <input type="text" id="linkTitle" placeholder="Enter link title" required>
-
-                    <label for="linkURL">Link URL:</label>
-                    <input type="url" id="linkURL" placeholder="Enter link URL" required>
-
-                    <button type="submit">Add Link</button>
-                </form>
-            </div>
+        <h1>Study Links Organizer</h1>
+        <button class="add-main-section" onclick="addMainSection()">+ Add Main Section</button>
+        <div id="sections-container">
+            <!-- Main sections will be dynamically added here -->
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
